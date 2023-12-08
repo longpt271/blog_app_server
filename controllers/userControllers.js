@@ -1,4 +1,6 @@
+import { uploadPicture } from "../middleware/uploadPictureMiddleware";
 import User from "../models/User";
+import { fileRemover } from "../utils/fileRemover";
 
 const registerUser = async (req, res, next) => {
   try {
@@ -116,4 +118,66 @@ const updateProfile = async (req, res, next) => {
   }
 };
 
-export { registerUser, loginUser, userProfile, updateProfile };
+const updateProfilePicture = async (req, res, next) => {
+  try {
+    const upload = uploadPicture.single("profilePicture");
+
+    upload(req, res, async function (err) {
+      if (err) {
+        const error = new Error(
+          "An unknown error occured when uploading " + err.message
+        );
+        next(error);
+      } else {
+        // every thing went well
+        // Nếu có file được truyền vào form-data
+        if (req.file) {
+          let filename;
+          let updatedUser = await User.findById(req.user._id);
+          filename = updatedUser.avatar;
+          if (filename) {
+            fileRemover(filename); // Xóa file ảnh cũ
+          }
+          updatedUser.avatar = req.file.filename;
+          await updatedUser.save();
+          res.json({
+            _id: updatedUser._id,
+            avatar: updatedUser.avatar,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            verified: updatedUser.verified,
+            admin: updatedUser.admin,
+            token: await updatedUser.generateJWT(),
+          });
+        } else {
+          // Nếu không có file nào
+          let filename;
+          let updatedUser = await User.findById(req.user._id);
+          filename = updatedUser.avatar;
+          updatedUser.avatar = "";
+          await updatedUser.save();
+          fileRemover(filename);
+          res.json({
+            _id: updatedUser._id,
+            avatar: updatedUser.avatar,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            verified: updatedUser.verified,
+            admin: updatedUser.admin,
+            token: await updatedUser.generateJWT(),
+          });
+        }
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  registerUser,
+  loginUser,
+  userProfile,
+  updateProfile,
+  updateProfilePicture,
+};
