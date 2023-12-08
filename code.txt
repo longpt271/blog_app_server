@@ -24,3 +24,6 @@ sẽ dùng: import express from "express";
 
 // hash password
 npm i bcryptjs
+
+// token user
+npm i jsonwebtoken

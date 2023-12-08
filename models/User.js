@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import { hash } from "bcryptjs";
+import { sign } from "jsonwebtoken";
 
 const UserSchema = new Schema(
   {
@@ -16,7 +17,7 @@ const UserSchema = new Schema(
 
 // pre: func sẽ chạy trước khi user được 'save'
 UserSchema.pre("save", async function (next) {
-  // this có nghĩa là các giá trị nhận vào body khi lưu user
+  // this là các giá trị khi "creating a new user" trong userController
   if (this.isModified("password")) {
     // mã hóa lại dữ liệu
     this.password = await hash(this.password, 10);
@@ -24,6 +25,12 @@ UserSchema.pre("save", async function (next) {
   }
   return next();
 });
+
+UserSchema.methods.generateJWT = async function () {
+  return await sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: "30d", // expires in 30 days
+  });
+};
 
 const User = model("User", UserSchema);
 
