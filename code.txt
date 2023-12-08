@@ -21,3 +21,6 @@ sẽ dùng: import express from "express";
 - models
 - utils
 - middleware
+
+// hash password
+npm i bcryptjs

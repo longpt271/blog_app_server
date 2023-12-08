@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { hash } from "bcryptjs";
 
 const UserSchema = new Schema(
   {
@@ -12,6 +13,17 @@ const UserSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// pre: func sẽ chạy trước khi user được 'save'
+UserSchema.pre("save", async function (next) {
+  // this có nghĩa là các giá trị nhận vào body khi lưu user
+  if (this.isModified("password")) {
+    // mã hóa lại dữ liệu
+    this.password = await hash(this.password, 10);
+    return next();
+  }
+  return next();
+});
 
 const User = model("User", UserSchema);
 
