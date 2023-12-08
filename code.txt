@@ -13,3 +13,11 @@ sẽ dùng: import express from "express";
 // dùng esm
 - import "./data" thay vì "./data.js"
 - không cần "type": "module" khi import
+
+// create folders needed
+- config
+- routes
+- controllers
+- models
+- utils
+- middleware
