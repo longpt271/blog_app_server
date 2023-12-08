@@ -1,6 +1,12 @@
-npm init -y
-
 //
+npm init -y
 npm i --save-dev nodemon
 npm run dev
 
+// install needed packages
+npm i --save dotenv esm express mongoose
+
+//
+  "type": "module",
+thay vì: const express = require("express");
+sẽ dùng: import express from "express";
