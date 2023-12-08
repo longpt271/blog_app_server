@@ -27,3 +27,6 @@ npm i bcryptjs
 
 // token user
 npm i jsonwebtoken
+
+// upload picture
+npm i multer
