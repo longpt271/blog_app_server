@@ -30,3 +30,6 @@ npm i jsonwebtoken
 
 // upload picture
 npm i multer
+
+// unique id
+npm i uuid
