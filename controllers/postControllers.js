@@ -22,4 +22,44 @@ const createPost = async (req, res, next) => {
   }
 };
 
-export { createPost };
+const updatePost = async (req, res, next) => {
+  try {
+    const post = await Post.findOne({ slug: req.params.slug });
+
+    if (!post) {
+      const error = new Error("Post aws not found");
+      next(error);
+      return;
+    }
+
+    const upload = uploadPicture.single("postPicture");
+
+    upload(req, res, async function (err) {
+      if (err) {
+        const error = new Error(
+          "An unknown error occured when uploading " + err.message
+        );
+        next(error);
+      } else {
+        // every thing went well
+        if (req.file) {
+          let filename;
+          filename = post.photo;
+          if (filename) {
+            fileRemover(filename);
+          }
+          post.photo = req.file.filename;
+        } else {
+          let filename;
+          filename = post.photo;
+          post.photo = "";
+          fileRemover(filename);
+        }
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createPost, updatePost };
