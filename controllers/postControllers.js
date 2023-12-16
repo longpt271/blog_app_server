@@ -105,6 +105,13 @@ const getPost = async (req, res, next) => {
         path: "user",
         select: ["avatar", "name"],
       },
+      {
+        path: "comments",
+        match: {
+          check: true,
+          parent: null, // main comment = null
+        },
+      },
     ]);
 
     if (!post) {
