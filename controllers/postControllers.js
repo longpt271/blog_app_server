@@ -98,4 +98,19 @@ const deletePost = async (req, res, next) => {
   }
 };
 
-export { createPost, updatePost, deletePost };
+const getPost = async (req, res, next) => {
+  try {
+    const post = await Post.findOne({ slug: req.params.slug });
+
+    if (!post) {
+      const error = new Error("Post was not found");
+      return next(error);
+    }
+
+    return res.json(post);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createPost, updatePost, deletePost, getPost };
