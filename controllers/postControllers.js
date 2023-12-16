@@ -111,6 +111,24 @@ const getPost = async (req, res, next) => {
           check: true,
           parent: null, // main comment = null
         },
+        populate: [
+          {
+            path: "user",
+            select: ["avatar", "name"],
+          },
+          {
+            path: "replies",
+            match: {
+              check: true,
+            },
+            populate: [
+              {
+                path: "user",
+                select: ["avatar", "name"],
+              },
+            ],
+          },
+        ],
       },
     ]);
 
