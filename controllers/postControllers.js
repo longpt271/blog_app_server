@@ -143,4 +143,24 @@ const getPost = async (req, res, next) => {
   }
 };
 
-export { createPost, updatePost, deletePost, getPost };
+const getAllPosts = async (req, res, next) => {
+  try {
+    const post = await Post.find({}).populate([
+      {
+        path: "user",
+        select: ["avatar", "name", "verified"],
+      },
+    ]);
+
+    if (!post) {
+      const error = new Error("Post was not found");
+      return next(error);
+    }
+
+    return res.json(post);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createPost, updatePost, deletePost, getPost, getAllPosts };
