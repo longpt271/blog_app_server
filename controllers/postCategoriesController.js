@@ -59,4 +59,35 @@ const updatePostCategory = async (req, res, next) => {
   }
 };
 
-export { createPostCategory, getAllPostCategories, updatePostCategory };
+const deletePostCategory = async (req, res, next) => {
+  try {
+    const categoryId = req.params.postCategoryId;
+
+    const existingCategory = await PostCategories.findById(categoryId);
+    if (!existingCategory) {
+      const error = new Error("Category was not found");
+      return next(error);
+    }
+
+    // delete all post have categoryId
+    await Post.updateMany(
+      { categories: { $in: [categoryId] } },
+      { $pull: { categories: categoryId } }
+    );
+
+    await PostCategories.deleteOne({ _id: categoryId });
+
+    res.send({
+      message: "Post category is successfully deleted!",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export {
+  createPostCategory,
+  getAllPostCategories,
+  updatePostCategory,
+  deletePostCategory,
+};
